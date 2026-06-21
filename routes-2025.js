@@ -59,7 +59,7 @@ window.ROUTES = [
     ]}
   },
 
-  // 🚂 5. Ventimiglia → Bordighera (短途5km)
+  // 🚂 5. Ventimiglia → Bordighera
   {
     name: "🚂 Ventimiglia → Bordighera",
     color: "#C67B3A", dash: 0, distance_km: 5,
@@ -69,27 +69,46 @@ window.ROUTES = [
     ]}
   },
 
-  // 🚂 6. Bordighera → Genova → La Spezia
+  // 🚂 6. Bordighera → Genova
   {
-    name: "🚂 Bordighera → Genova → La Spezia",
-    color: "#C67B3A", dash: 0, distance_km: 185,
+    name: "🚂 Bordighera → Genova",
+    color: "#C67B3A", dash: 0, distance_km: 145,
     geometry: { type: "LineString", coordinates: [
       [7.67,43.80],[7.75,43.82],[7.85,43.85],[7.95,43.88],
       [8.05,43.92],[8.15,43.96],[8.25,44.00],[8.35,44.05],
       [8.45,44.10],[8.55,44.15],[8.65,44.22],[8.75,44.28],
-      [8.85,44.35],[8.93,44.41],[9.00,44.38],[9.10,44.34],
+      [8.85,44.35],[8.93,44.41]
+    ]}
+  },
+
+  // 🚂 7. Genova → La Spezia
+  {
+    name: "🚂 Genova → La Spezia",
+    color: "#C67B3A", dash: 0, distance_km: 90,
+    geometry: { type: "LineString", coordinates: [
+      [8.93,44.41],[9.00,44.38],[9.10,44.34],
       [9.20,44.30],[9.30,44.26],[9.40,44.23],[9.50,44.20],
       [9.60,44.17],[9.70,44.14],[9.80,44.11],[9.82,44.10]
     ]}
   },
 
-  // 🚂 7. La Spezia → Cinque Terre → Pisa → Forte dei Marmi → La Spezia 环线
+  // 🚂 8. La Spezia → Cinque Terre → La Spezia
   {
-    name: "🚂 La Spezia → Cinque Terre → Pisa → Forte dei Marmi → La Spezia",
-    color: "#A67B5B", dash: 0, distance_km: 170,
+    name: "🚂 La Spezia → Cinque Terre → La Spezia",
+    color: "#A67B5B", dash: 0, distance_km: 40,
     geometry: { type: "LineString", coordinates: [
       [9.82,44.10],[9.80,44.11],[9.78,44.11],[9.76,44.10],
-      [9.75,44.10],[9.80,44.08],[9.85,44.05],[9.90,44.00],
+      [9.75,44.10],[9.76,44.10],[9.78,44.11],[9.80,44.11],
+      [9.82,44.10]
+    ]}
+  },
+
+  // 🚂 9. La Spezia → Pisa → Forte dei Marmi → La Spezia
+  {
+    name: "🚂 La Spezia → Pisa → Forte dei Marmi → La Spezia",
+    color: "#A67B5B", dash: 0, distance_km: 130,
+    geometry: { type: "LineString", coordinates: [
+      [9.82,44.10],[9.85,44.05],[9.90,44.00],
       [9.95,43.95],[10.00,43.90],[10.05,43.85],[10.10,43.82],
       [10.15,43.78],[10.20,43.75],[10.30,43.73],[10.40,43.72],
       [10.38,43.74],[10.35,43.78],[10.30,43.82],[10.25,43.86],
@@ -99,7 +118,7 @@ window.ROUTES = [
     ]}
   },
 
-  // 🚂 8. La Spezia → Antibes
+  // 🚂 10. La Spezia → Antibes
   {
     name: "🚂 La Spezia → Antibes",
     color: "#8B9E6B", dash: 0, distance_km: 275,
@@ -114,24 +133,33 @@ window.ROUTES = [
     ]}
   },
 
-  // 🚂 9. Antibes → Cannes → Monaco → Menton → Antibes 蔚蓝海岸环线
+  // 🚂 11. Antibes → Cannes → Antibes
   {
-    name: "🚂 Antibes → Cannes → Monaco → Menton → Antibes",
-    color: "#5B8FA8", dash: 0, distance_km: 130,
+    name: "🚂 Antibes → Cannes → Antibes",
+    color: "#5B8FA8", dash: 0, distance_km: 25,
     geometry: { type: "LineString", coordinates: [
       [7.12,43.58],[7.10,43.57],[7.08,43.56],[7.06,43.55],
-      [7.04,43.55],[7.02,43.55],[7.06,43.56],[7.10,43.57],
-      [7.14,43.58],[7.18,43.60],[7.22,43.62],[7.26,43.64],
-      [7.30,43.66],[7.34,43.68],[7.38,43.70],[7.40,43.72],
-      [7.42,43.73],[7.44,43.74],[7.46,43.76],[7.48,43.77],
-      [7.50,43.78],[7.48,43.77],[7.46,43.76],[7.44,43.74],
-      [7.42,43.73],[7.40,43.72],[7.38,43.70],[7.34,43.68],
-      [7.30,43.66],[7.26,43.64],[7.22,43.62],[7.18,43.60],
-      [7.14,43.58],[7.12,43.58]
+      [7.04,43.55],[7.02,43.55],[7.04,43.55],[7.06,43.56],
+      [7.08,43.56],[7.10,43.57],[7.12,43.58]
     ]}
   },
 
-  // 🚂 10. Antibes → Nice
+  // 🚂 12. Antibes → Monaco → Menton → Antibes
+  {
+    name: "🚂 Antibes → Monaco → Menton → Antibes",
+    color: "#5B8FA8", dash: 0, distance_km: 105,
+    geometry: { type: "LineString", coordinates: [
+      [7.12,43.58],[7.14,43.58],[7.18,43.60],[7.22,43.62],
+      [7.26,43.64],[7.30,43.66],[7.34,43.68],[7.38,43.70],
+      [7.40,43.72],[7.42,43.73],[7.44,43.74],[7.46,43.76],
+      [7.48,43.77],[7.50,43.78],[7.48,43.77],[7.46,43.76],
+      [7.44,43.74],[7.42,43.73],[7.40,43.72],[7.38,43.70],
+      [7.34,43.68],[7.30,43.66],[7.26,43.64],[7.22,43.62],
+      [7.18,43.60],[7.14,43.58],[7.12,43.58]
+    ]}
+  },
+
+  // 🚂 13. Antibes → Nice
   {
     name: "🚂 Antibes → Nice",
     color: "#8B9E6B", dash: 0, distance_km: 23,
@@ -142,7 +170,7 @@ window.ROUTES = [
     ]}
   },
 
-  // ✈️ 11. Nice → Qatar (Doha) → Shanghai 返程
+  // ✈️ 14. Nice → Qatar (Doha) → Shanghai 返程
   {
     name: "✈️ Nice → Qatar (Doha) → Shanghai",
     color: "#DAA520", dash: 3, distance_km: 9720,
