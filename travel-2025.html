@@ -256,7 +256,7 @@ function drawRoutes(routes) {
 
     const icon = L.divIcon({
       className: '',
-      html: `<div class="stop-label">${orders}. ${stop.name} <span style="color:#aaa;font-size:9px">${stop.nameCN||''}</span></div>`,
+      html: `<div class="stop-label">${orders}. ${stop.name} ${stop.nameCN||''}</div>`,
       iconSize: null,
       iconAnchor: [0, 0],
     });
