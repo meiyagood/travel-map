@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>2026 北欧+中欧旅行线路图</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+html, body { margin: 0; padding: 0; height: 100%; font-family: "Georgia", "Times New Roman", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", serif; background: #FDFBF7; }
+#map { height: 100vh; width: 100%; }
+
+/* ============ 顶部标题栏 ============ */
+.header {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(253,251,247,0.97); padding: 14px 28px; border-radius: 4px;
+  border: 0.5px solid #1A1A1A; z-index: 1000; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.header h1 {
+  margin: 0; font-size: 18px; font-weight: 400; color: #1A1A1A;
+  letter-spacing: 3px; font-family: "Georgia", "Times New Roman", serif;
+}
+.header .sub {
+  margin-top: 6px; font-size: 11px; color: #7f8c8d; letter-spacing: 1px;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+}
+
+/* ============ 图例面板 ============ */
+.legend {
+  position: absolute; bottom: 24px; left: 24px; z-index: 1000;
+  background: rgba(253,251,247,0.97); padding: 16px 18px; border-radius: 4px;
+  border: 0.5px solid #1A1A1A; font-size: 11px; max-width: 320px;
+  max-height: 65vh; overflow-y: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+.legend h3 {
+  margin: 0 0 10px 0; font-size: 13px; color: #1A1A1A;
+  font-weight: 400; letter-spacing: 2px;
+  font-family: "Georgia", "Times New Roman", serif;
+}
+.legend ol { margin: 0; padding-left: 22px; color: #34495e; line-height: 1.8; }
+.legend .km { color: #aaa; font-size: 10px; float: right; margin-left: 8px; }
+.legend .seg { margin-top: 10px; padding-top: 8px; border-top: 0.5px solid #ddd; font-size: 10px; color: #888; line-height: 1.7; }
+.legend .seg span { display: inline-block; width: 20px; height: 3px; vertical-align: middle; margin-right: 5px; border-radius: 1px; }
+.legend .total {
+  margin-top: 8px; padding: 8px 10px; background: #F4F4F0; border-radius: 3px;
+  font-weight: 400; color: #1A1A1A; text-align: center; font-size: 11px;
+  line-height: 1.6; font-family: "Georgia", "Times New Roman", serif;
+  letter-spacing: 0.5px;
+}
+
+/* ============ 站点标签 ============ */
+.stop-label {
+  background: #FDFBF7; border: 1px solid #1A1A1A; border-radius: 2px;
+  padding: 3px 8px; font-size: 10px; font-weight: 400; color: #1A1A1A;
+  white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  letter-spacing: 0.5px; font-family: "Georgia", "Times New Roman", serif;
+}
+
+/* ============ 移动端适配 ============ */
+@media (max-width: 768px) {
+  .header { padding: 10px 16px; }
+  .header h1 { font-size: 14px; letter-spacing: 1.5px; }
+  .legend { max-width: 240px; font-size: 10px; bottom: 12px; left: 12px; padding: 10px 12px; }
+  .stop-label { font-size: 8px; padding: 2px 5px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>2026 · 北欧与中欧之旅</h1>
+  <div class="sub">NORDIC &amp; CENTRAL EUROPE · GRAND TOUR</div>
+</div>
+
+<div class="legend">
+  <h3>行程顺序</h3>
+  <ol id="route-list"></ol>
+  <div class="total" id="total-km">— km</div>
+  <div class="seg">
+    <div><span style="background:#5B8FA8"></span>✈️ 长途飞行</div>
+    <div><span style="background:#3D6B7D"></span>⛴️ 北欧渡轮</div>
+    <div><span style="background:#6B9E85"></span>🚂 北欧铁路</div>
+    <div><span style="background:#8B7E6E"></span>🚂 中欧铁路</div>
+    <div><span style="background:#C4956A"></span>🚌 中欧巴士</div>
+    <div><span style="background:#4A7C9B"></span>✈️ 返程飞行</div>
+    <div style="margin-top:8px;color:#888">
+      实线 = 主行程 &nbsp;·&nbsp; 短虚线 = 返回/回程<br/>
+      长虚线 = 飞机 &nbsp;·&nbsp; 中虚线 = 渡轮 &nbsp;·&nbsp; 点划线 = 巴士
+    </div>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="routes.js"></script>
+<script>
+/* ========================================
+   地图初始化 — 以中欧为中心
+   ======================================== */
+const map = L.map('map', {
+  center: [55.0, 12.0],
+  zoom: 5,
+  zoomControl: true
+});
+
+/* ========================================
+   底图图层
+   ======================================== */
+const cartoLight = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>', maxZoom: 19 }
+).addTo(map);
+
+const cartoDark = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>', maxZoom: 19 }
+);
+
+const esriImagery = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: 'Tiles &copy; Esri', maxZoom: 19 }
+);
+
+/* ========================================
+   铁路叠加层
+   ======================================== */
+const railOverlay = L.tileLayer(
+  'https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+  { attribution: '&copy; OpenRailwayMap', subdomains: 'abc', maxZoom: 19, opacity: 0.7 }
+);
+
+/* ========================================
+   图层控制器
+   ======================================== */
+L.control.layers(
+  { "🗺️ 浅色地图": cartoLight, "🌙 暗色地图": cartoDark, "🛰️ 卫星影像": esriImagery },
+  { "🚉 铁路网 (OpenRailwayMap)": railOverlay },
+  { position: 'topright', collapsed: false }
+).addTo(map);
+
+/* ========================================
+   站点数据
+   ======================================== */
+const mainStops = [
+  { ll: [31.2304, 121.4737], name: "Shanghai", country: "🇨🇳 出发 · 上海" },
+  { ll: [25.2048, 55.2708],  name: "Dubai", country: "🇦🇪 中转 · 迪拜" },
+  { ll: [48.2082, 16.3738], name: "Vienna", country: "🇦🇹 维也纳" },
+  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 哥本哈根" },
+  { ll: [59.9139, 10.7522], name: "Oslo", country: "🇳🇴 奥斯陆" },
+  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 返回哥本哈根" },
+  { ll: [55.6050, 13.0038], name: "Malmö", country: "🇸🇪 马尔默" },
+  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 返回哥本哈根" },
+  { ll: [52.5200, 13.4050], name: "Berlin", country: "🇩🇪 柏林" },
+  { ll: [50.0755, 14.4378], name: "Prague", country: "🇨🇿 布拉格" },
+  { ll: [48.2082, 16.3738], name: "Vienna", country: "🇦🇹 返回维也纳" },
+  { ll: [31.2304, 121.4737], name: "Shanghai", country: "🇨🇳 返程 · 上海" },
+];
+
+/* ========================================
+   路线绘制核心
+   dash: 0=实线火车, 1=虚线回程, 2=渡轮, 3=飞行长虚线, 4=巴士点划线
+   ======================================== */
+function drawRoutes(routes) {
+  const ul = document.getElementById('route-list');
+  let total = 0, flightKm = 0, trainKm = 0, ferryKm = 0, busKm = 0;
+
+  routes.forEach((seg) => {
+    if (!seg.geometry) return;
+
+    const latlngs = seg.geometry.coordinates.map(c => [c[1], c[0]]);
+
+    const isFlight = seg.dash === 3;
+    const isFerry  = seg.dash === 2;
+    const isBus    = seg.dash === 4;
+    const dash = (seg.dash === 1) ? '6,6'
+               : (seg.dash === 2) ? '5,10'
+               : (seg.dash === 3) ? '8,12'
+               : (seg.dash === 4) ? '10,4,2,4'
+               : null;
+
+    const weight = isFlight ? 2.5 : (isFerry ? 3 : (isBus ? 3.5 : 4));
+    const outlineWeight = isFlight ? 5 : (isFerry ? 6 : (isBus ? 6 : 7));
+
+    // 白色描边
+    L.polyline(latlngs, {
+      color: '#ffffff', weight: outlineWeight, opacity: 0.50,
+      lineJoin: 'round', lineCap: 'round',
+    }).addTo(map);
+
+    // 主体
+    L.polyline(latlngs, {
+      color: seg.color,
+      weight: weight,
+      opacity: 0.92,
+      dashArray: dash,
+      lineJoin: 'round',
+      lineCap: 'round',
+    }).addTo(map).bindTooltip(`${seg.name} · ${seg.distance_km} km`, { sticky: true });
+
+    total += seg.distance_km || 0;
+    if (isFlight) flightKm += seg.distance_km;
+    else if (isFerry) ferryKm += seg.distance_km;
+    else if (isBus) busKm += seg.distance_km;
+    else trainKm += seg.distance_km;
+
+    const li = document.createElement('li');
+    li.innerHTML = `${seg.name} <span class="km">${seg.distance_km} km</span>`;
+    ul.appendChild(li);
+  });
+
+  // 总里程
+  const parts = [];
+  if (flightKm) parts.push(`✈️ 飞行 ${Math.round(flightKm).toLocaleString()} km`);
+  if (trainKm)  parts.push(`🚂 火车 ${Math.round(trainKm).toLocaleString()} km`);
+  if (ferryKm)  parts.push(`⛴️ 渡轮 ${Math.round(ferryKm).toLocaleString()} km`);
+  if (busKm)    parts.push(`🚌 巴士 ${Math.round(busKm).toLocaleString()} km`);
+  document.getElementById('total-km').innerHTML =
+    parts.join('<br/>') + `<br/>合计 ${Math.round(total).toLocaleString()} km`;
+
+  // 站点标记 — 去重
+  const seen = new Set();
+  mainStops.forEach((stop, idx) => {
+    const key = `${stop.ll[0].toFixed(3)},${stop.ll[1].toFixed(3)}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    // 查找该站点在列表中的所有出现序号
+    const orders = mainStops
+      .map((s, i) => (
+        Math.abs(s.ll[0] - stop.ll[0]) < 0.01 &&
+        Math.abs(s.ll[1] - stop.ll[1]) < 0.01 ? i + 1 : null
+      ))
+      .filter(Boolean)
+      .join('/');
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="stop-label">${orders}. ${stop.name}</div>`,
+      iconSize: null,
+      iconAnchor: [0, 0],
+    });
+
+    L.marker(stop.ll, { icon })
+      .addTo(map)
+      .bindPopup(`<b>${stop.name}</b><br/>${stop.country}<br/>行程第 ${orders} 站`);
+  });
+
+  // 自动适配
+  const bounds = L.latLngBounds(mainStops.map(s => s.ll));
+  map.fitBounds(bounds, { padding: [50, 50], maxZoom: 6 });
+}
+
+/* ========================================
+   加载数据
+   ======================================== */
+if (window.ROUTES) {
+  drawRoutes(window.ROUTES);
+} else {
+  document.getElementById('total-km').innerHTML = '⚠️ 无法加载 routes.js';
+}
+</script>
+
+</body>
+</html>
