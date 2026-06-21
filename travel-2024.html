@@ -148,11 +148,26 @@ const railOverlay = L.tileLayer(
 /* ========================================
    图层控制器
    ======================================== */
-L.control.layers(
+const layerControl = L.control.layers(
   { "🗺️ 浅色地图": cartoLight, "🌙 暗色地图": cartoDark, "🛰️ 卫星影像": esriImagery },
   { "🚉 铁路网 (OpenRailwayMap)": railOverlay },
   { position: 'topright', collapsed: false }
 ).addTo(map);
+
+// 移动端把图层控制器移到右下角，避免挡住标题栏
+function updateLayerPosition() {
+  const container = layerControl.getContainer();
+  if (!container) return;
+  if (window.innerWidth <= 768) {
+    container.classList.remove('leaflet-top', 'leaflet-right');
+    container.classList.add('leaflet-bottom', 'leaflet-right');
+  } else {
+    container.classList.remove('leaflet-bottom', 'leaflet-right');
+    container.classList.add('leaflet-top', 'leaflet-right');
+  }
+}
+setTimeout(updateLayerPosition, 100);
+window.addEventListener('resize', updateLayerPosition);
 
 /* ========================================
    站点数据 — 英文名在前，中文名在后
