@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<title>2026 北欧+中欧旅行线路图</title>
+<title>2024 伊比利亚半岛 → 直布罗陀海峡 → 北非摩洛哥</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -32,14 +32,14 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: "Georgia", "Times
   margin: 0 6px; padding-bottom: 1px;
 }
 .header .year-nav a.active {
-  font-weight: bold; border-bottom: 2px solid #3D6B7D;
+  font-weight: bold; border-bottom: 2px solid #C41E3A;
 }
 
 /* ============ 图例面板 ============ */
 .legend {
   position: absolute; bottom: 24px; left: 24px; z-index: 1000;
   background: rgba(253,251,247,0.97); padding: 16px 18px; border-radius: 4px;
-  border: 0.5px solid #1A1A1A; font-size: 11px; max-width: 320px;
+  border: 0.5px solid #1A1A1A; font-size: 11px; max-width: 360px;
   max-height: 65vh; overflow-y: auto;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -80,12 +80,12 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: "Georgia", "Times
 <body>
 
 <div class="header">
-  <h1>2026 · 北欧与中欧之旅</h1>
-  <div class="sub">NORDIC &amp; CENTRAL EUROPE · GRAND TOUR</div>
+  <h1>2024 · 伊比利亚半岛 → 直布罗陀海峡 → 北非摩洛哥</h1>
+  <div class="sub">IBERIAN PENINSULA &amp; STRAIT OF GIBRALTAR &amp; NORTH AFRICA</div>
   <div class="year-nav">
-    <a href="index.html" class="active">2026 北欧+中欧</a>
+    <a href="index.html">← 2026 北欧+中欧</a>
     <a href="travel-2025.html">2025 南法+意北+托斯卡纳</a>
-    <a href="travel-2024.html">2024 西葡+摩洛哥 →</a>
+    <a href="travel-2024.html" class="active">2024 西葡+摩洛哥</a>
   </div>
 </div>
 
@@ -94,15 +94,13 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: "Georgia", "Times
   <ol id="route-list"></ol>
   <div class="total" id="total-km">— km</div>
   <div class="seg">
-    <div><span style="background:#5B8FA8"></span>✈️ 长途飞行</div>
-    <div><span style="background:#3D6B7D"></span>⛴️ 北欧渡轮</div>
-    <div><span style="background:#6B9E85"></span>🚂 北欧铁路</div>
-    <div><span style="background:#8B7E6E"></span>🚂 中欧铁路</div>
-    <div><span style="background:#C4956A"></span>🚌 中欧巴士</div>
-    <div><span style="background:#4A7C9B"></span>✈️ 返程飞行</div>
+    <div><span style="background:#C41E3A"></span>🇪🇸 西班牙红 · 火车</div>
+    <div><span style="background:#2E5E3E"></span>🇵🇹 葡萄牙绿 · 火车</div>
+    <div><span style="background:#1B5F8A"></span>🇲🇦 摩洛哥蓝 · 渡轮</div>
+    <div><span style="background:#D4A017"></span>✈️ 金 · 飞行</div>
+    <div><span style="background:#D4845A"></span>🚌 陶土 · 比利牛斯巴士</div>
     <div style="margin-top:8px;color:#888">
-      实线 = 主行程 &nbsp;·&nbsp; 短虚线 = 返回/回程<br/>
-      长虚线 = 飞机 &nbsp;·&nbsp; 中虚线 = 渡轮 &nbsp;·&nbsp; 点划线 = 巴士
+      实线 = 火车 &nbsp;·&nbsp; 虚线 = 渡轮/回程 &nbsp;·&nbsp; 长虚线 = 飞机 &nbsp;·&nbsp; 点划线 = 巴士
     </div>
   </div>
 </div>
@@ -110,13 +108,13 @@ html, body { margin: 0; padding: 0; height: 100%; font-family: "Georgia", "Times
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="routes.js"></script>
+<script src="routes-2024.js"></script>
 <script>
 /* ========================================
-   地图初始化 — 以中欧为中心
+   地图初始化 — 以伊比利亚半岛为中心
    ======================================== */
 const map = L.map('map', {
-  center: [55.0, 12.0],
+  center: [40.0, -3.5],
   zoom: 5,
   zoomControl: true
 });
@@ -157,21 +155,27 @@ L.control.layers(
 ).addTo(map);
 
 /* ========================================
-   站点数据
+   站点数据 — 英文名在前，中文名在后
    ======================================== */
 const mainStops = [
-  { ll: [31.2304, 121.4737], name: "Shanghai", country: "🇨🇳 出发 · 上海" },
-  { ll: [25.2048, 55.2708],  name: "Dubai", country: "🇦🇪 中转 · 迪拜" },
-  { ll: [48.2082, 16.3738], name: "Vienna", country: "🇦🇹 维也纳" },
-  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 哥本哈根" },
-  { ll: [59.9139, 10.7522], name: "Oslo", country: "🇳🇴 奥斯陆" },
-  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 返回哥本哈根" },
-  { ll: [55.6050, 13.0038], name: "Malmö", country: "🇸🇪 马尔默" },
-  { ll: [55.6761, 12.5683], name: "Copenhagen", country: "🇩🇰 返回哥本哈根" },
-  { ll: [52.5200, 13.4050], name: "Berlin", country: "🇩🇪 柏林" },
-  { ll: [50.0755, 14.4378], name: "Prague", country: "🇨🇿 布拉格" },
-  { ll: [48.2082, 16.3738], name: "Vienna", country: "🇦🇹 返回维也纳" },
-  { ll: [31.2304, 121.4737], name: "Shanghai", country: "🇨🇳 返程 · 上海" },
+  { ll: [40.4168, -3.7038],  name: "Madrid", nameCN: "马德里", country: "🇪🇸 出发 · 马德里" },
+  { ll: [41.1579, -8.6291],  name: "Porto", nameCN: "波尔图", country: "🇵🇹 葡萄牙·到达" },
+  { ll: [38.7223, -9.1393],  name: "Lisboa", nameCN: "里斯本", country: "🇵🇹 里斯本" },
+  { ll: [38.7804, -9.4980],  name: "Cabo da Roca", nameCN: "罗卡角", country: "🇵🇹 欧陆最西端" },
+  { ll: [38.7223, -9.1393],  name: "Lisboa", nameCN: "里斯本", country: "🇵🇹 返回" },
+  { ll: [37.0194, -7.9322],  name: "Faro", nameCN: "法鲁", country: "🇵🇹 阿尔加维" },
+  { ll: [37.3891, -5.9845],  name: "Sevilla", nameCN: "塞维利亚", country: "🇪🇸 安达卢西亚·到达" },
+  { ll: [37.1773, -3.5986],  name: "Granada", nameCN: "格拉纳达", country: "🇪🇸 安达卢西亚" },
+  { ll: [36.7213, -4.4214],  name: "Málaga", nameCN: "马拉加", country: "🇪🇸 太阳海岸" },
+  { ll: [36.1333, -5.4500],  name: "Algeciras", nameCN: "阿尔赫西拉斯", country: "🇪🇸 直布罗陀湾" },
+  { ll: [36.0137, -5.6029],  name: "Tarifa", nameCN: "塔里法", country: "🇪🇸 欧陆最南端" },
+  { ll: [35.7800, -5.8000],  name: "Tanger", nameCN: "丹吉尔", country: "🇲🇦 北非摩洛哥·到达" },
+  { ll: [41.3874, 2.1686],   name: "Barcelona", nameCN: "巴塞罗那", country: "🇪🇸 加泰罗尼亚·到达" },
+  { ll: [42.7000, 2.9000],   name: "Perpignan", nameCN: "佩皮尼昂", country: "🇫🇷 比利牛斯山" },
+  { ll: [41.3874, 2.1686],   name: "Barcelona", nameCN: "巴塞罗那", country: "🇪🇸 返回" },
+  { ll: [41.6750, 2.8000],   name: "Blanes", nameCN: "布拉内斯", country: "🇪🇸 布拉瓦海岸" },
+  { ll: [41.3874, 2.1686],   name: "Barcelona", nameCN: "巴塞罗那", country: "🇪🇸 返回" },
+  { ll: [40.4168, -3.7038],  name: "Madrid", nameCN: "马德里", country: "🇪🇸 终点 · 马德里" },
 ];
 
 /* ========================================
@@ -253,14 +257,14 @@ function drawRoutes(routes) {
 
     const icon = L.divIcon({
       className: '',
-      html: `<div class="stop-label">${orders}. ${stop.name}</div>`,
+      html: `<div class="stop-label">${orders}. ${stop.name} ${stop.nameCN||''}</div>`,
       iconSize: null,
       iconAnchor: [0, 0],
     });
 
     L.marker(stop.ll, { icon })
       .addTo(map)
-      .bindPopup(`<b>${stop.name}</b><br/>${stop.country}<br/>行程第 ${orders} 站`);
+      .bindPopup(`<b>${stop.name}</b> ${stop.nameCN||''}<br/>${stop.country}<br/>行程第 ${orders} 站`);
   });
 
   // 自动适配
@@ -274,7 +278,7 @@ function drawRoutes(routes) {
 if (window.ROUTES) {
   drawRoutes(window.ROUTES);
 } else {
-  document.getElementById('total-km').innerHTML = '⚠️ 无法加载 routes.js';
+  document.getElementById('total-km').innerHTML = '⚠️ 无法加载 routes-2024.js';
 }
 </script>
 
